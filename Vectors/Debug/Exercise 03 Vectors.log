@@ -1,0 +1,5 @@
+﻿  Main.cpp
+c:\users\bryce\desktop\cs homework\exercise 03 vectors\main.cpp(44): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\bryce\desktop\cs homework\exercise 03 vectors\main.cpp(55): warning C4018: '<': signed/unsigned mismatch
+  Exercise 03 Vectors.vcxproj -> C:\Users\Bryce\Desktop\CS Homework\Exercise 03 Vectors\Debug\Exercise 03 Vectors.exe
+  Exercise 03 Vectors.vcxproj -> C:\Users\Bryce\Desktop\CS Homework\Exercise 03 Vectors\Debug\Exercise 03 Vectors.pdb (Full PDB)

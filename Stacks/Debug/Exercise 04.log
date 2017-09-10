@@ -1,0 +1,7 @@
+﻿  Main.cpp
+c:\users\bryce\desktop\computer science\homework\cs 162\exercise 04\main.cpp(26): warning C4018: '<': signed/unsigned mismatch
+c:\users\bryce\desktop\computer science\homework\cs 162\exercise 04\main.cpp(31): warning C4018: '<': signed/unsigned mismatch
+c:\users\bryce\desktop\computer science\homework\cs 162\exercise 04\main.cpp(40): warning C4018: '<': signed/unsigned mismatch
+c:\users\bryce\desktop\computer science\homework\cs 162\exercise 04\main.cpp(46): warning C4018: '<': signed/unsigned mismatch
+  Exercise 04.vcxproj -> C:\Users\Bryce\Desktop\Computer Science\Homework\CS 162\Exercise 04\Debug\Exercise 04.exe
+  Exercise 04.vcxproj -> C:\Users\Bryce\Desktop\Computer Science\Homework\CS 162\Exercise 04\Debug\Exercise 04.pdb (Full PDB)

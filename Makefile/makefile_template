@@ -1,0 +1,19 @@
+#Global variables used for compiling and linking
+COMPILER=nasm
+LINKER=ld
+COMPILER_FLAGS=-f elf -g -F stabs
+LINKER_FLAGS=-s
+SOURCES=hello.asm
+OBJECTS=hello.o
+EXECUTABLE=main
+
+#Calls executable to start dependency chain
+all: $(EXECUTABLE)
+
+#Called to creat executable by linking made object files
+$(EXECUTABLE): $(OBJECTS)
+	$(LINKER) $(LINKER_FLAGS) $(OBJECTS) -o $(EXECUTABLE)
+
+#Called by dependency, compiles files into object files to be linked
+$(OBJECTS): $(SOURCES)
+	$(COMPILER) $(COMPILER_FLAGS) $(SOURCES)

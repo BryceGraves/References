@@ -1,0 +1,129 @@
+/*
+ * R Jesse Chaney
+ */
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+
+// When a child process is created, it will get a copy of this
+// variable with the value at the time it was created.
+volatile sig_atomic_t child_value = 1;
+
+int 
+main(
+     int argc
+     , char *argv[]
+     , char *envp[]
+)
+{
+  pid_t cpid = -1;
+  pid_t mypid = -1;
+  pid_t parentpid = -1;
+  int i;
+
+  for (i = 0; i < 3; i++) {
+    // Here is our call to fork(). Notice that is does not take
+    // any arguments and that the return type in pid_t.
+    switch((cpid = fork())) {
+      // Both parent and child processes continue executing here
+      // following the call to fork().
+    case -1:
+      // We had a failure to fork.
+      perror("failed to fork new process");
+      exit(EXIT_FAILURE);
+      break;
+    case 0:
+      // You CANNOT rely on the order of which will be scheduled first
+      // to run, parent or child. It is indeterminate.
+
+      // This is a new process with a new pid. Each time a new
+      // process is created, the child process goes through this
+      // section of code.
+      // The child process is initially created as copy of the
+      // parent's process memory, including variables and the
+      // values. The child can modify those values without
+      // having an effect on the parent's copy.
+      mypid = getpid();
+
+      // Get the pid of the parent process of this child.
+      parentpid = getppid();
+
+      fprintf(stderr, "    CHILD: pid = %d  parent pid: %d line: %d\n"
+	      , mypid, parentpid, __LINE__);
+      // Child specific code goes here.
+      // We could exec a new program here...
+      // execlp("ls", "ls", (char *)NULL);
+      break;
+    default:
+      // You CANNOT rely on the order of which will be scheduled first
+      // to run, parent or child. It is indeterminate.
+
+      // Parent specific code goes here.
+      mypid = getpid();
+      fprintf(stderr, "PARENT: pid = %d line: %d  child pid = %d  loop = %d\n"
+	      , mypid, __LINE__, cpid, i);
+      child_value++; // this is not really an atomic operation
+      break;
+    }
+    if (cpid == 0) {
+      // This is a child process.
+      // We are going to break out of the loop. We don't want each
+      // child process also starting to fork() new processes and
+      // each of those child processes forking, and each of those
+      // forking, and ...
+      break;
+    }
+    // The parent process will continue to loop, creating the
+    // remaining child processes.
+  }
+
+  if (0 == cpid) {
+    fprintf(stderr, "    CHILD: pid = %d child value: %d  loop value = %d\n"
+	    , mypid, child_value, i);
+    sleep(5 * child_value);
+    //raise(SIGINT);
+
+    // You need to be a little bit careful with your return/exit value.
+    // exit/return value is actually only the lower 8 bits of the value
+    // you pass to return/exit.
+    //exit(child_value);
+    return(child_value);
+  } 
+  else {
+    fprintf(stderr, "PARENT: pid = %d line: %d\n", mypid, __LINE__);
+
+    for ( ; ; ) {
+      int status;
+
+      // Make a call to the wait() function. The call to wait() will
+      // block until a child process terminates.
+      cpid = wait(&status);
+      if (cpid > 0) {
+	int exit_status;
+
+	exit_status = WEXITSTATUS(status);
+	// The wait() call returned a child process id.
+	fprintf(stderr, "PARENT: pid = %d  child exited: %d %d  %s\n"
+		, mypid, cpid, exit_status
+		, (WIFEXITED(status) ? "child exited normally" : "child had abnormal exit"));
+	if (WIFSIGNALED(status)) {
+	  fprintf(stderr, "  child exited from signal %d\n", WTERMSIG(status));
+	}
+      } 
+      else {
+	// The call to wait() returned a negative value, indicating
+	// that there are no child processes to wait on.
+	// We could have used a count down on the child_value
+	// varialbe, but this actually works better for this case.
+	fprintf(stderr, "PARENT: pid = %d  all children exited\n"
+		, mypid);
+	break;
+      }
+    }
+  }
+
+  return(EXIT_SUCCESS);
+}

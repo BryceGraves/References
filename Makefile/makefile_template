@@ -10,7 +10,7 @@ EXECUTABLE=main
 #Calls executable to start dependency chain
 all: $(EXECUTABLE)
 
-#Called to creat executable by linking made object files
+#Called to create an executable by linking made object files
 $(EXECUTABLE): $(OBJECTS)
 	$(LINKER) $(LINKER_FLAGS) $(OBJECTS) -o $(EXECUTABLE)
 
